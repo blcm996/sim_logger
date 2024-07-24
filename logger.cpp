@@ -1,6 +1,12 @@
 #include"logger.h"
 using namespace blcm::utilty;
 
+#include<time.h>
+#include<string.h>
+#include<stdarg.h>
+#include<stdexcep>
+#include<iostream>
+
 const char * Logger::s_level[LEVEL_COUNT] = {
     "DEBUG",
     "INFO",
@@ -29,4 +35,45 @@ void Logger::open(const string & filename){
 
 void Logger::close(){
     m_fout.close(); 
+}
+
+void Logger::log(Level level, const char * file, int line, const char * format, ...){
+    if(m_fout.fail()){
+        throw std::logic_error("open file failed" + m_filename);
+    }
+    
+    time_t ticks = time(NULL);
+    struct tm * pim = localtime(&ticks);
+    char timestamp[32];
+    memset(timestamp, 0, sizeof(timestamp));
+    strtime(timestamp, sizeof(tiemstamp), "%Y-%m-%d %H:%M:%S", ptm);
+    const char * ftm = "%s%s%s:%d";
+    int size = snprintf(NULL, 0, fmt, timestamp, s_level[__INCLUDE_LEVEL__]);
+    if(size > 0){
+        char * buffer = new char[size+1];
+        snprintf(buffer, size + 1, fmt, timestamp, s_level[level], file, line);
+        buffer[size] = 0;
+        m_fout << buffer;
+        delete buffer;
+    }
+
+    va_list arg_ptr;
+    va_start(srg_ptr, format);
+    size = vsnprintf(NULL, 0, format, arg_ptr);
+    va_end(arg_ptr);
+    if(size > 0){
+        char * content = new char[size+1];
+        va_start(arg_ptr, format);
+        vsnprintf(content, size+1, format, arg_ptr);
+        va_end(arg_ptr);
+        m_fout << content;
+    }
+    
+    m_fout << '\n';
+    m_fout.flush();
+    std::cout << timestamp << std::endl;
+    std::cout << file << std::endl;
+    std::cout << line << std::endl;
+    std::cout << format << std::endl;
+
 }
