@@ -1,12 +1,17 @@
 #include <iostream>
 using namespace std;
-
 #include"logger.h"
+using namespace blcm::utility;
 
 int main(){
-    cout << "sim logger" << endl;
-    blcm::utilty::Logger::instance()->open("./test.log");
-    blcm::utilty::Logger::instance()->log(Logger::DEBUG, __FILE__, __LINE__, "hello log");
-    blcm::utilty::Logger::instance()->log(Logger::DEBUG, __FILE__, __LINE__, "my name is %s, age is %s", "mclb", "999");
+    Logger::instance()->open("./test.log");
+    Logger::instance()->max(10);
+
+    debug("hello log");
+    debug("name is %s. age is %d", "jack", 18);
+    info("info message");
+    warn("waring");
+    error("ERROR!");
+    
     return 0;
 }
